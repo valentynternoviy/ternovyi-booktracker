@@ -1,0 +1,38 @@
+[
+  {
+    "title": " Harry Potter ",
+    "author": "J.K. Rowling",
+    "pages": "300",
+    "genre": "Фентезі"
+  },
+  {
+    "title": "harry potter",
+    "author": "J.K. Rowling",
+    "pages": "300",
+    "genre": "Фентезі"
+  },
+  {
+    "title": "",
+    "author": "Unknown",
+    "pages": "100",
+    "genre": "Детектив"
+  },
+  {
+    "title": "1984",
+    "author": "George Orwell",
+    "pages": "невідомо",
+    "genre": "Фантастика"
+  },
+  {
+    "title": " Кобзар ",
+    "author": "Т. Шевченко",
+    "pages": "250",
+    "genre": "Поезія"
+  },
+  {
+    "title": "кобзар",
+    "author": "Т. Шевченко",
+    "pages": "250",
+    "genre": "Поезія"
+  }
+]
