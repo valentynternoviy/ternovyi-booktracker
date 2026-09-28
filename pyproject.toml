@@ -18,3 +18,6 @@ build-backend = "setuptools.build_meta"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+
+exclude = ["legacy/"]

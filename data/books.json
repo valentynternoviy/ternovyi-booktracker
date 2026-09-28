@@ -3,36 +3,36 @@
     "title": " Harry Potter ",
     "author": "J.K. Rowling",
     "pages": "300",
-    "genre": "Фентезі"
+    "genre": "Fantasy"
   },
   {
     "title": "harry potter",
     "author": "J.K. Rowling",
     "pages": "300",
-    "genre": "Фентезі"
+    "genre": "Fantasy"
   },
   {
     "title": "",
     "author": "Unknown",
     "pages": "100",
-    "genre": "Детектив"
+    "genre": "Mystery"
   },
   {
     "title": "1984",
     "author": "George Orwell",
-    "pages": "невідомо",
-    "genre": "Фантастика"
+    "pages": "unknown",
+    "genre": "Sci-Fi"
   },
   {
-    "title": " Кобзар ",
-    "author": "Т. Шевченко",
+    "title": " The Great Gatsby ",
+    "author": "F. Scott Fitzgerald",
     "pages": "250",
-    "genre": "Поезія"
+    "genre": "Classic"
   },
   {
-    "title": "кобзар",
-    "author": "Т. Шевченко",
+    "title": "the great gatsby",
+    "author": "F. Scott Fitzgerald",
     "pages": "250",
-    "genre": "Поезія"
+    "genre": "Classic"
   }
 ]

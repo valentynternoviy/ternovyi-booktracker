@@ -1,5 +1,6 @@
 import json
 
+
 def process(f):
     file = open(f)
     d = json.loads(file.read())
