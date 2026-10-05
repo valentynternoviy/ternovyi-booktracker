@@ -1,5 +1,7 @@
-import time, tracemalloc
+import time
+import tracemalloc
 from pathlib import Path
+
 from booktracker.sources.json_file import read_rows_jsonl
 
 path = Path("data/large.jsonl")
