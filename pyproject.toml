@@ -6,7 +6,7 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["ruff", "pytest", "pre-commit"]
+dev = ["ruff", "pytest", "pre-commit", "mypy", "pydantic", "pydantic-settings"]
 
 [project.scripts]
 booktracker = "booktracker.cli:main"
@@ -21,3 +21,8 @@ target-version = "py312"
 
 
 exclude = ["legacy/"]
+
+[tool.mypy]
+python_version = "3.12"
+show_error_codes = true
+warn_unused_ignores = true
