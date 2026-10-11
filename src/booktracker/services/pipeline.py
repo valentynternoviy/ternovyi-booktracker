@@ -2,9 +2,14 @@ from collections import Counter
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from itertools import islice
+from typing import Any, TypeVar
+
+from pydantic import ValidationError
 
 from ..domain.models import Book
-from ..domain.parsing import to_book
+from ..sources.schemas import BookIn
+
+T = TypeVar("T")
 
 
 @dataclass(slots=True)
@@ -13,7 +18,7 @@ class PipelineStats:
     invalid: int = 0
     duplicates: int = 0
     kept: int = 0
-    by_genre: Counter = field(default_factory=Counter)
+    by_genre: Counter[str] = field(default_factory=Counter)
     pages_count: int = 0
     pages_sum: int = 0
     pages_min: int | None = None
@@ -25,16 +30,24 @@ class PipelineStats:
             return None
         return self.pages_sum / self.pages_count
 
-def parse_all(rows: Iterable[dict], stats: PipelineStats) -> Iterator[Book]:
+
+def parse_all(
+    rows: Iterable[dict[str, Any]],
+    stats: PipelineStats,
+) -> Iterator[Book]:
     for row in rows:
         stats.read += 1
-        book = to_book(row)
-        if book is None:
+        try:
+            yield BookIn.model_validate(row).to_domain()
+        except ValidationError:
             stats.invalid += 1
             continue
-        yield book
 
-def deduplicate(items: Iterable[Book], stats: PipelineStats) -> Iterator[Book]:
+
+def deduplicate(
+    items: Iterable[Book],
+    stats: PipelineStats,
+) -> Iterator[Book]:
     seen: set[tuple[str, str]] = set()
     for book in items:
         if book.key in seen:
@@ -42,6 +55,7 @@ def deduplicate(items: Iterable[Book], stats: PipelineStats) -> Iterator[Book]:
             continue
         seen.add(book.key)
         yield book
+
 
 def collect(items: Iterable[Book], stats: PipelineStats) -> None:
     for book in items:
@@ -57,7 +71,8 @@ def collect(items: Iterable[Book], stats: PipelineStats) -> None:
         if stats.pages_max is None or pages > stats.pages_max:
             stats.pages_max = pages
 
-def batched(items: Iterable[Book], size: int) -> Iterator[tuple[Book, ...]]:
+
+def batched[T](items: Iterable[T], size: int) -> Iterator[tuple[T, ...]]:
     iterator = iter(items)
     while batch := tuple(islice(iterator, size)):
         yield batch

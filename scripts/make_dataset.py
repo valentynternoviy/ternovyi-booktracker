@@ -18,11 +18,11 @@ with path.open("w", encoding="utf-8") as f:
                 "title": f"Book {i}",
                 "author": random.choice(authors),
                 "pages": str(random.randint(100, 1000)) if i % 7 else "за домовленістю",
-                "genre": random.choice(genres)
+                "genre": random.choice(genres),
             }
-        
+
         if i % 1000 == 0:
             row = dict(row, title="")  # некоректний запис (без назви)
-            
+
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
         prev = row

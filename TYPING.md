@@ -9,5 +9,8 @@
 - `src/booktracker/sources/json_file.py`: функція `read_rows_jsonl` повертає `Iterator[dict[str, Any]]`.
   - Обґрунтування: на рівні читання сирого JSON структура полів ще невідома. Типізація та валідація гарантуються наступним шаром — моделлю `BookIn` (Pydantic).
 
-## Підсумковий прогін
-- Буде оновлено після налаштування `strict = true`.
+## Підсумковий прогін (режим strict)
+- Команда: `mypy src tests`
+- Кількість помилок: 0 помилок у 12 файлах
+- Результат: `Success: no issues found in 12 source files`
+

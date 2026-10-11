@@ -8,23 +8,26 @@ from booktracker.sources.json_file import read_rows_jsonl
 
 path = Path("data/large.jsonl")
 
+
 def lazy():
     stats = PipelineStats()
     collect(deduplicate(parse_all(read_rows_jsonl(path), stats), stats), stats)
     return stats.kept
 
+
 def greedy():
     rows = list(read_rows_jsonl(path))
     parsed = [to_book(r) for r in rows]
     valid = [b for b in parsed if b is not None]
-    
+
     seen, unique = set(), []
     for b in valid:
         if b.key not in seen:
             seen.add(b.key)
             unique.append(b)
-            
+
     return len(unique)
+
 
 for name, fn in (("генераторний конвеєр", lazy), ("проміжні списки", greedy)):
     tracemalloc.start()

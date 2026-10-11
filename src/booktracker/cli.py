@@ -30,9 +30,12 @@ def main() -> None:
         print(f"Дублікатів: {stats.duplicates}")
         print(f"Залишилось: {stats.kept}")
         if stats.pages_min is not None:
-            print(f"Сторінки: min={stats.pages_min} max={stats.pages_max} avg={stats.pages_avg:.0f}")
+            print(
+                f"Сторінки: min={stats.pages_min} max={stats.pages_max} avg={stats.pages_avg:.0f}"
+            )
         for genre, count in stats.by_genre.most_common():
             print(f"  {genre}: {count}")
+
 
 if __name__ == "__main__":
     main()
