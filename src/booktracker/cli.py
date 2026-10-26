@@ -9,12 +9,13 @@ from .logging_setup import setup
 from .services.pipeline import Pipeline
 from .services.ports import Source
 from .sources.csv_file import CsvSource
-from .sources.jsonl import JsonlSource
+from .sources.jsonl import JsonSource, JsonlSource
 
 logger = logging.getLogger(__name__)
 
 FACTORIES: dict[str, Callable[[Path], Source]] = {
     ".jsonl": JsonlSource,
+    ".json": JsonSource,
     ".csv": CsvSource,
 }
 

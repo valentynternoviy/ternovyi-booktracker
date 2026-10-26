@@ -30,3 +30,20 @@ class JsonlSource:
                 except json.JSONDecodeError:
                     logger.debug("skip malformed line %d in %s", number, self._path)
                     continue
+
+
+class JsonSource:
+    name = "json"
+
+    def __init__(self, path: Path) -> None:
+        self._path = path
+
+    def read(self) -> Iterator[dict[str, Any]]:
+        try:
+            handle = self._path.open(encoding="utf-8")
+        except OSError as exc:
+            raise SourceError(f"cannot open {self._path}") from exc
+
+        with handle as f:
+            data = json.load(f)
+            yield from data
