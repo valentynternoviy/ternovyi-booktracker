@@ -1,40 +1,43 @@
 import argparse
-from itertools import islice
+from collections.abc import Callable
 from pathlib import Path
 
-from .services.pipeline import PipelineStats, collect, deduplicate, parse_all
-from .sources.json_file import read_rows_jsonl
+from .services.pipeline import Pipeline
+from .services.ports import Source
+from .sources.jsonl import JsonlSource
+
+FACTORIES: dict[str, Callable[[Path], Source]] = {
+    ".jsonl": JsonlSource,
+}
 
 
-def main() -> None:
+def build_source(path: Path) -> Source:
+    try:
+        factory = FACTORIES[path.suffix]
+    except KeyError:
+        raise SystemExit(f"unsupported file type: {path.suffix}") from None
+    return factory(path)
+
+
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="booktracker")
-    parser.add_argument("path", type=Path, help="файл із даними")
-    parser.add_argument("--stats", action="store_true", help="вивести повну статистику")
-    parser.add_argument("--preview", type=int, help="показати перші N записів")
-    args = parser.parse_args()
+    parser.add_argument("paths", nargs="+", type=Path)
+    parser.add_argument("--stats", action="store_true", help="показати повну статистику")
+    args = parser.parse_args(argv)
 
-    rows = read_rows_jsonl(args.path)
-    stats = PipelineStats()
-    pipeline = deduplicate(parse_all(rows, stats), stats)
+    sources = [build_source(p) for p in args.paths]
+    stats = Pipeline(sources).run()
 
-    if args.preview:
-        for book in islice(pipeline, args.preview):
-            print(book)
-        print(f"\nпрочитано рядків: {stats.read} із загальної кількості")
-        return
-
-    if args.stats:
-        collect(pipeline, stats)
-        print(f"Прочитано записів: {stats.read}")
-        print(f"Відхилено: {stats.invalid}")
-        print(f"Дублікатів: {stats.duplicates}")
-        print(f"Залишилось: {stats.kept}")
-        if stats.pages_min is not None:
-            print(
-                f"Сторінки: min={stats.pages_min} max={stats.pages_max} avg={stats.pages_avg:.0f}"
-            )
-        for genre, count in stats.by_genre.most_common():
-            print(f"  {genre}: {count}")
+    print(f"Прочитано записів: {stats.read}")
+    print(f"Відхилено: {stats.invalid}")
+    print(f"Дублікатів: {stats.duplicates}")
+    print(f"Залишилось: {stats.kept}")
+    if stats.pages_min is not None:
+        print(f"Сторінки: min={stats.pages_min} max={stats.pages_max} avg={stats.pages_avg:.0f}")
+    for genre, count in stats.by_genre.most_common():
+        print(f"  {genre}: {count}")
+    for name, count in stats.by_source.items():
+        print(f"  з {name}: {count}")
 
 
 if __name__ == "__main__":
