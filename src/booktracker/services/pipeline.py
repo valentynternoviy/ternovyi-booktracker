@@ -1,3 +1,4 @@
+import logging
 from collections import Counter
 from collections.abc import Iterator
 from dataclasses import dataclass, field
@@ -7,6 +8,8 @@ from pydantic import ValidationError
 from ..domain.models import Book
 from .ports import Source
 from .schemas import BookIn
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -35,6 +38,7 @@ class Pipeline:
 
     def run(self) -> PipelineStats:
         stats = PipelineStats()
+        logger.info("start processing %d source(s)", len(self._sources))
         seen: set[tuple[str, str]] = set()
         for source in self._sources:
             for book in self._parse(source, stats):
@@ -53,6 +57,14 @@ class Pipeline:
                         stats.pages_min = pages
                     if stats.pages_max is None or pages > stats.pages_max:
                         stats.pages_max = pages
+        logger.info(
+            "done: kept %d, invalid %d, duplicates %d",
+            stats.kept,
+            stats.invalid,
+            stats.duplicates,
+        )
+        if stats.invalid:
+            logger.warning("skipped %d invalid rows", stats.invalid)
         return stats
 
     @staticmethod
@@ -61,5 +73,7 @@ class Pipeline:
             stats.read += 1
             try:
                 yield BookIn.model_validate(row).to_domain()
-            except ValidationError:
+            except ValidationError as exc:
                 stats.invalid += 1
+                logger.debug("skip row: %d validation errors", exc.error_count())
+                continue
