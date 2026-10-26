@@ -9,7 +9,7 @@ from .logging_setup import setup
 from .services.pipeline import Pipeline
 from .services.ports import Source
 from .sources.csv_file import CsvSource
-from .sources.jsonl import JsonSource, JsonlSource
+from .sources.jsonl import JsonlSource, JsonSource
 
 logger = logging.getLogger(__name__)
 
