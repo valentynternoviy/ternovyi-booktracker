@@ -1,11 +1,17 @@
 import argparse
+import logging
 from collections.abc import Callable
 from pathlib import Path
 
+from .config import Settings
+from .errors import BookTrackerError, SourceError
+from .logging_setup import setup
 from .services.pipeline import Pipeline
 from .services.ports import Source
 from .sources.csv_file import CsvSource
 from .sources.jsonl import JsonlSource
+
+logger = logging.getLogger(__name__)
 
 FACTORIES: dict[str, Callable[[Path], Source]] = {
     ".jsonl": JsonlSource,
@@ -17,18 +23,33 @@ def build_source(path: Path) -> Source:
     try:
         factory = FACTORIES[path.suffix]
     except KeyError:
-        raise SystemExit(f"unsupported file type: {path.suffix}") from None
+        raise SourceError(f"unsupported file type: {path.suffix}") from None
     return factory(path)
 
 
-def main(argv: list[str] | None = None) -> None:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="booktracker")
     parser.add_argument("paths", nargs="+", type=Path)
+    parser.add_argument(
+        "--log-level",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR"],
+        help="перекриває значення з .env і змінних середовища",
+    )
     parser.add_argument("--stats", action="store_true", help="показати повну статистику")
-    args = parser.parse_args(argv)
+    return parser
 
-    sources = [build_source(p) for p in args.paths]
-    stats = Pipeline(sources).run()
+
+def main(argv: list[str] | None = None) -> None:
+    args = build_parser().parse_args(argv)
+    settings = Settings()
+    setup(args.log_level or settings.log_level)
+
+    try:
+        sources = [build_source(path) for path in args.paths]
+        stats = Pipeline(sources).run()
+    except BookTrackerError as exc:
+        logger.error("%s", exc)
+        raise SystemExit(1) from exc
 
     print(f"Прочитано записів: {stats.read}")
     print(f"Відхилено: {stats.invalid}")
