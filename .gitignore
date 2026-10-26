@@ -12,3 +12,5 @@ __pycache__/
 data/large.jsonl
 data/extra.csv
 *.egg-info/
+reports/
+scripts/generate_*.py
