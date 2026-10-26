@@ -4,10 +4,12 @@ from pathlib import Path
 
 from .services.pipeline import Pipeline
 from .services.ports import Source
+from .sources.csv_file import CsvSource
 from .sources.jsonl import JsonlSource
 
 FACTORIES: dict[str, Callable[[Path], Source]] = {
     ".jsonl": JsonlSource,
+    ".csv": CsvSource,
 }
 
 
