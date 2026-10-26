@@ -10,5 +10,5 @@ __pycache__/
 .idea/
 .vscode/
 data/large.jsonl
+data/extra.csv
 *.egg-info/
-

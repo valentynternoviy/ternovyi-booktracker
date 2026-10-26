@@ -27,29 +27,35 @@ with out_path.open("w", encoding="utf-8", newline="") as f:
 
     # 1. 10 invalid rows (empty title)
     for i in range(10):
-        writer.writerow({
-            "title": "",
-            "author": random.choice(authors),
-            "pages": "300",
-            "category": random.choice(genres),
-        })
+        writer.writerow(
+            {
+                "title": "",
+                "author": random.choice(authors),
+                "pages": "300",
+                "category": random.choice(genres),
+            }
+        )
 
     # 2. Exactly 500 duplicates of books in large.jsonl
     for title, author in existing_books:
-        writer.writerow({
-            "title": title,
-            "author": author,
-            "pages": "350",
-            "category": random.choice(genres),
-        })
+        writer.writerow(
+            {
+                "title": title,
+                "author": author,
+                "pages": "350",
+                "category": random.choice(genres),
+            }
+        )
 
     # 3. Exactly 4490 unique books
     for i in range(4490):
-        writer.writerow({
-            "title": f"CSV Unique Novel {i}",
-            "author": random.choice(authors),
-            "pages": str(random.randint(150, 850)),
-            "category": random.choice(genres),
-        })
+        writer.writerow(
+            {
+                "title": f"CSV Unique Novel {i}",
+                "author": random.choice(authors),
+                "pages": str(random.randint(150, 850)),
+                "category": random.choice(genres),
+            }
+        )
 
 print("Generated data/extra.csv with exactly 500 duplicates and 4490 unique books.")
