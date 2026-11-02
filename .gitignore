@@ -14,3 +14,6 @@ data/extra.csv
 *.egg-info/
 reports/
 scripts/generate_*.py
+.coverage
+.coverage.*
+htmlcov/
