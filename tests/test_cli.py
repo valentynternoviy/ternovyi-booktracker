@@ -59,3 +59,4 @@ def test_environment_beats_default(
     monkeypatch.setattr("sys.argv", ["booktracker", str(jsonl_file)])
     main()
     assert levels == ["WARNING"]
+

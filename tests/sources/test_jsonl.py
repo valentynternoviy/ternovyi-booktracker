@@ -21,3 +21,4 @@ def test_empty_lines_ignored(tmp_path: Path) -> None:
     path = tmp_path / "empty.jsonl"
     path.write_text('\n\n{"a": 1}\n\n', encoding="utf-8")
     assert list(JsonlSource(path).read()) == [{"a": 1}]
+

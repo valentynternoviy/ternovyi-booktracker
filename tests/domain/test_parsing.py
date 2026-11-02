@@ -21,3 +21,4 @@ def test_to_book_invalid() -> None:
     assert to_book({"title": "", "author": "Author"}) is None
     assert to_book({"title": "Title", "author": ""}) is None
     assert to_book({"title": "Title", "author": "Author", "pages": "-10"}) is None
+

@@ -14,3 +14,4 @@ from booktracker.domain.text import normalize_title
 )
 def test_normalize_title(raw: str, expected: str) -> None:
     assert normalize_title(raw) == expected
+
