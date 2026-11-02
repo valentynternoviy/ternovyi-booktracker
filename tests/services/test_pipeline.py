@@ -1,17 +1,5 @@
-from collections.abc import Iterator
-from typing import Any
-
 from booktracker.services.pipeline import Pipeline
-
-
-class FakeSource:
-    def __init__(self, rows: list[dict[str, Any]], name: str = "fake") -> None:
-        self.name = name
-        self._rows = rows
-
-    def read(self) -> Iterator[dict[str, Any]]:
-        yield from self._rows
-
+from tests.conftest import FakeSource
 
 ROW = {"title": "Dev Book", "author": "Acme", "pages": "1500", "genre": "Sci-Fi"}
 

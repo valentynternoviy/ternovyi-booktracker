@@ -6,7 +6,16 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["ruff", "pytest", "pre-commit", "mypy", "pydantic", "pydantic-settings", "import-linter"]
+dev = [
+    "ruff",
+    "pytest",
+    "pre-commit",
+    "mypy",
+    "pydantic",
+    "pydantic-settings",
+    "import-linter",
+    "pytest-cov",
+]
 
 [project.scripts]
 booktracker = "booktracker.cli:main"
@@ -25,6 +34,10 @@ python_version = "3.12"
 strict = true
 show_error_codes = true
 warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
 
 [tool.importlinter]
 root_package = "booktracker"

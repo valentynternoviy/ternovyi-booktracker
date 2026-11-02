@@ -7,7 +7,8 @@ from booktracker.config import mask
 from booktracker.errors import SourceError
 from booktracker.services.pipeline import Pipeline
 from booktracker.sources.jsonl import JsonlSource
-from tests.services.test_pipeline import ROW, FakeSource
+from tests.conftest import FakeSource
+from tests.services.test_pipeline import ROW
 
 
 def test_invalid_rows_are_logged_as_warning(caplog: pytest.LogCaptureFixture) -> None:
