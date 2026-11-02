@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..domain.models import Book
+from ..domain.text import normalize_title
 
 
 class BookIn(BaseModel):
@@ -21,15 +22,16 @@ class BookIn(BaseModel):
                 return None  # «за домовленістю» / «невідомо»
         return value
 
-    @field_validator("title", "author")
+    @field_validator("author")
     @classmethod
-    def strip_spaces(cls, value: str) -> str:
+    def strip_spaces_author(cls, value: str) -> str:
         return " ".join(value.split())
 
     @field_validator("title")
     @classmethod
-    def lowercase(cls, value: str) -> str:
-        return value.lower()
+    def normalize(cls, value: str) -> str:
+        # єдине місце правди: те саме правило, що й у домені
+        return normalize_title(value)
 
     def to_domain(self) -> Book:
         return Book(

@@ -1,7 +1,8 @@
 import logging
 from collections import Counter
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -30,6 +31,20 @@ class PipelineStats:
         if not self.pages_count:
             return None
         return self.pages_sum / self.pages_count
+
+
+def parse_all(
+    rows: Iterable[dict[str, Any]],
+    stats: PipelineStats,
+) -> Iterator[Book]:
+    for row in rows:
+        stats.read += 1
+        try:
+            yield BookIn.model_validate(row).to_domain()
+        except ValidationError as exc:
+            stats.invalid += 1
+            logger.debug("skip row: %d validation errors", exc.error_count())
+            continue
 
 
 class Pipeline:
@@ -69,11 +84,4 @@ class Pipeline:
 
     @staticmethod
     def _parse(source: Source, stats: PipelineStats) -> Iterator[Book]:
-        for row in source.read():
-            stats.read += 1
-            try:
-                yield BookIn.model_validate(row).to_domain()
-            except ValidationError as exc:
-                stats.invalid += 1
-                logger.debug("skip row: %d validation errors", exc.error_count())
-                continue
+        yield from parse_all(source.read(), stats)

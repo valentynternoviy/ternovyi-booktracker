@@ -1,4 +1,7 @@
-from booktracker.services.pipeline import Pipeline
+from itertools import islice
+from typing import Any
+
+from booktracker.services.pipeline import Pipeline, PipelineStats, parse_all
 from tests.conftest import FakeSource
 
 ROW = {"title": "Dev Book", "author": "Acme", "pages": "1500", "genre": "Sci-Fi"}
@@ -44,3 +47,23 @@ def test_negative_pages_is_invalid() -> None:
     row = dict(ROW, pages="-50")
     stats = Pipeline([FakeSource([row])]).run()
     assert stats.invalid == 1 and stats.kept == 0
+
+
+def test_pipeline_stats_empty_pages_avg() -> None:
+    stats = PipelineStats()
+    assert stats.pages_avg is None
+
+
+def test_parse_all_is_lazy(row: dict[str, Any]) -> None:
+    consumed = 0
+
+    def endless() -> Any:
+        nonlocal consumed
+        while True:
+            consumed += 1
+            yield row
+
+    stats = PipelineStats()
+    taken = list(islice(parse_all(endless(), stats), 3))
+    assert len(taken) == 3
+    assert consumed == 3

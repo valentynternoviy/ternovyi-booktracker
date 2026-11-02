@@ -16,4 +16,4 @@ jobs:
         run: mypy src tests
       - name: Architecture contracts
         run: lint-imports
-      - run: pytest -q
+      - run: pytest
